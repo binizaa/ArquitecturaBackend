@@ -3,9 +3,13 @@ import passportLocal from 'passport-local';
 import { userModel } from '../models/user.model.js';
 import { createHash, isValidPassword } from '../utils/password.js';
 import { PRIVATE_KEY } from '../utils/jsonwebtoken.js';
-import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt'; // CORRECTO
+import jwtStrategy from 'passport-jwt';
 
 const LocalStrategy = passportLocal.Strategy;
+
+const JwtStrategy = jwtStrategy.Strategy
+// Extrae el token JWT de las cookies
+const ExtractJwt = jwtStrategy.ExtractJwt;
 
 // Cookie extractor para JWT
 const cookieExtractor = req => {
@@ -24,9 +28,10 @@ const cookieExtractor = req => {
 /** Inicializa estrategias de Passport */
 const inicializePassport = () => {
 
-    /**
-     * Estrategia JWT
-     */
+    // Todo:: OJO si usamos Passort-JWT lo reemplazaremos por login(LocalStrategy)
+    /* ==================================
+            Jwt Strategy
+    ==================================*/
     passport.use('jwt', new JwtStrategy(
         {
             jwtFromRequest: ExtractJwt.fromExtractors([cookieExtractor]),

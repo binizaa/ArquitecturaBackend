@@ -1,5 +1,8 @@
 import { Router } from "express";
 import passport from "passport";
+import { userModel } from "../models/user.model.js";
+import { isValidPassword } from "../utils/password.js";
+import { generateJWTToken } from "../utils/jsonwebtoken.js";
 
 const router = Router();
 
@@ -14,28 +17,29 @@ router.get("/", (req, res) => {
 });
 
 // Login
-// router.post('/login', passport.authenticate('login', { failureRedirect: '/api/sessions/fail-login'}), async (req, res) => {
-//   try {
+/* router.post('/login', passport.authenticate('login', { failureRedirect: '/api/sessions/fail-login'}), async (req, res) => {
+  try {
 
-//     console.log("User found to login")
-//     const user = req.user
+    console.log("User found to login")
+    const user = req.user
 
-//     const access_token = generateJWToken(user) 
+    const access_token = generateJWToken(user) 
 
-//     res.send({ status: "success", payload: access_token});
+    res.send({ status: "success", payload: access_token});
 
-//   } catch (err) { 
-//     console.error("Error en login:", err);
-//     const errorMessage = err instanceof Error ? err.message : String(err);
-//     res.status(500).json({ status: "error", message: "Error interno del servidor", error: errorMessage });
-//   }
-// });
+  } catch (err) { 
+    console.error("Error en login:", err);
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    res.status(500).json({ status: "error", message: "Error interno del servidor", error: errorMessage });
+  }
+});*/
 
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
 
     const user = await userModel.findOne({ email });
+
     console.log("Usuario encontrado para login:");
     console.log(user);
 
@@ -66,15 +70,16 @@ router.post('/login', async (req, res) => {
     console.log(access_token);
 
     // Creamos la cookie y almacenamos el access_token en la cookie
-    req.cookie('jwtCookieToken', access_token, {
+    res.cookie('jwtCookieToken', access_token, {
       maxAge: 60000,
       httpOnly: true //No se expone la cookie
       //httpOnly: false // Se expone la cookie
     })
 
+
+
     return res.send({
       status: "success",
-      payload: access_token
     });
 
   } catch (error) {

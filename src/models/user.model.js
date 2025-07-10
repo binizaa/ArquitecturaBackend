@@ -11,7 +11,12 @@ const userSchema = new mongoose.Schema({
   },
   age: Number,
   city: String,
-  password:String
+  password:String,
+  role: {
+    type:String,
+    default: 'user',
+    enum: [ 'user', 'admin', 'premium']
+  }
 }, {
   versionKey: 'version' // Deshabilita el parámetro "__v"
 });

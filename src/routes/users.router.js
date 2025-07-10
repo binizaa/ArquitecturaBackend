@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { createHash } from '../utils/password.js';
 import { userModel } from '../models/user.model.js';
 
 const router = Router();
@@ -28,7 +29,7 @@ router.post("/", async (req, res) => {
       email,
       age,
       city,
-      password
+      password: createHash(password)
     });
 
     // Guardar el nuevo usuario en la base de datos
